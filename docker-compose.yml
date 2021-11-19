@@ -1,0 +1,36 @@
+version: '3.2'
+services:
+  samba:
+    image: samba4-ad:latest
+    build: ./
+    privileged: true
+    hostname: dc1.workgroup.local
+    environment:
+      SAMBA_REALM: workgroup.local
+      SAMBA_DOMAIN: workgroup
+      SAMBA_HOST_IP: 172.24.0.2
+      SAMBA_PASSWORD: P@ssw0rd
+      SAMBA_DNS_FORWARDER: 8.8.8.8,8.8.4.4
+    ports:
+      - 53:53
+      - 53:53/udp
+      - 88:88
+      - 88:88/udp
+      - 135:135
+      - 139:139
+      - 389:389
+      - 389:389/udp
+      - 445:445
+      - 464:464
+      - 464:464/udp
+      - 636:636
+      - 3268-3269:3268-3269
+    networks:
+      mynet:
+        ipv4_address: 172.24.0.2
+networks:
+  mynet:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.24.0.0/24
