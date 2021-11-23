@@ -1,5 +1,6 @@
 FROM ubuntu:20.04
 # Default environment variables. Please overwrite!
+LABEL org.opencontainers.image.source https://github.com/hayhaylonton/docker-samba-ad
 
 ENV SAMBA_REALM="samba.dom"
 ENV SAMBA_PASSWORD="UnsecurePassword!"
