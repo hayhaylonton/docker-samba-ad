@@ -1,7 +1,7 @@
 version: '3.2'
 services:
   samba:
-    image: samba4-ad:latest
+    image: ghcr.io/hayhaylonton/samba4-ad:latest
     build: ./
     privileged: true
     hostname: dc1.workgroup.local
