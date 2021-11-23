@@ -2,31 +2,47 @@
 
 set -e
 
-info () {
-    echo "[INFO] $@"
+samba_run () {
+    # Fix nameserver
+    echo nameserver 127.0.0.1 > /etc/resolv.conf
+    echo domain $SAMBA_REALM >> /etc/resolv.conf
+    echo search $SAMBA_REALM >> /etc/resolv.conf
+    cat /etc/resolv.conf
+    
+    samba -i -s /etc/samba/smb.conf
 }
 
 # Check if samba is setup
-[ -f /var/lib/samba/.setup ] && /etc/my_init.d/samba_run.sh
+#[ -f /var/lib/samba/.setup ] && /etc/my_init.d/samba_run.sh
+if [ -f /var/lib/samba/.setup ]
+then
+    samba_run
+fi
 
 # Require $SAMBA_REALM to be set
 : "${SAMBA_REALM:?SAMBA_REALM needs to be set}"
 
 # If $SAMBA_PASSWORD is not set, generate a password
-SAMBA_PASSWORD=${SAMBA_PASSWORD:-`(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c20; echo) 2>/dev/null`}
-info "Samba password set to: $SAMBA_PASSWORD"
+if [ ! "$SAMBA_PASSWORD" ]
+then
+    SAMBA_PASSWORD="UnsecurePassword!"
+fi
+echo "[INFO] Samba password set to: $SAMBA_PASSWORD"
 
 # Populate $SAMBA_OPTIONS
 SAMBA_OPTIONS=${SAMBA_OPTIONS:-}
 
-[ -n "$SAMBA_DOMAIN" ] \
-    && SAMBA_OPTIONS="$SAMBA_OPTIONS --domain=$SAMBA_DOMAIN" \
-    || SAMBA_OPTIONS="$SAMBA_OPTIONS --domain=${SAMBA_REALM%%.*}"
+if [ -n "$SAMBA_DOMAIN" ]
+then
+    SAMBA_OPTIONS="$SAMBA_OPTIONS --domain=$SAMBA_DOMAIN"
+else
+    SAMBA_OPTIONS="$SAMBA_OPTIONS --domain=${SAMBA_REALM%%.*}"
+fi
 
-[ -n "$SAMBA_HOST_IP" ] && SAMBA_OPTIONS="$SAMBA_OPTIONS --host-ip=$SAMBA_HOST_IP"
-
-# Fix nameserver
-echo "search ${SAMBA_REALM}\nnameserver 127.0.0.1" > /etc/resolv.conf
+if [ -n "$SAMBA_HOST_IP" ] 
+then
+    SAMBA_OPTIONS="$SAMBA_OPTIONS --host-ip=$SAMBA_HOST_IP"
+fi
 
 # Provision domain
 rm -f /etc/samba/smb.conf
@@ -44,20 +60,18 @@ samba-tool domain provision \
 #mv /etc/samba/smb.conf /var/lib/samba/private/smb.conf
 
 # Update dns-forwarder if required
-[ -n "$SAMBA_DNS_FORWARDER" ] \
-    && sed -i "s/dns forwarder = .*/dns forwarder = $SAMBA_DNS_FORWARDER/" /etc/samba/smb.conf
-
+if [ -n "$SAMBA_DNS_FORWARDER" ]
+then
+    sed -i "s/dns forwarder = .*/dns forwarder = $SAMBA_DNS_FORWARDER/" /etc/samba/smb.conf
+fi
+#fix bug sysvol
 sed -i 's/\[sysvol\]/\[sysvol\]\n\tpreserve case = yes\n\tpublic = no\n\tcase sensitive = no\n\tvfs objects = dfs_samba4 acl_xattr\n\tbrowseable = no/' /etc/samba/smb.conf
 mv /etc/krb5.conf /etc/krb5.conf.original
 cp /var/lib/samba/private/krb5.conf /etc/
-echo nameserver 127.0.0.1 > /etc/resolv.conf
-echo domain $SAMBA_REALM >> /etc/resolv.conf
-cat /etc/resolv.conf
+
+
 sed -i "s/dns_lookup_realm = false/dns_lookup_realm = true/" /etc/krb5.conf
 
 # Mark samba as setup
 touch /var/lib/samba/.setup
-/etc/my_init.d/samba_run.sh
-
-# Setup only?
-[ -n "$SAMBA_SETUP_ONLY" ] && exit 127 || :
+samba_run

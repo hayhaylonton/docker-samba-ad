@@ -20,7 +20,8 @@ RUN locale-gen en_US.utf8 && \
 	
 # Add startup scripts
 RUN mkdir -p /etc/my_init.d
-COPY samba_setup.sh samba_run.sh /etc/my_init.d/
+#COPY samba_setup.sh samba_run.sh /etc/my_init.d/
+COPY samba_setup.sh /etc/my_init.d/
 #COPY samba_run.sh /etc/my_init.d/
 #RUN chmod +x /etc/my_init.d/samba_setup.sh
 #RUN chown root:root /etc/my_init.d/samba_setup.sh

@@ -11,6 +11,8 @@ services:
       SAMBA_HOST_IP: 172.24.0.2
       SAMBA_PASSWORD: P@ssw0rd
       SAMBA_DNS_FORWARDER: 8.8.8.8,8.8.4.4
+    volumes:
+      - data:/var/lib/samba
     ports:
       - 53:53
       - 53:53/udp
@@ -34,3 +36,5 @@ networks:
     ipam:
       config:
       - subnet: 172.24.0.0/24
+volumes:
+    data:
