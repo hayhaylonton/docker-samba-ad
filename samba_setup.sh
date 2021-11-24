@@ -13,7 +13,6 @@ samba_run () {
 }
 
 # Check if samba is setup
-#[ -f /var/lib/samba/.setup ] && /etc/my_init.d/samba_run.sh
 if [ -f /var/lib/samba/.setup ]
 then
     samba_run
@@ -55,9 +54,6 @@ samba-tool domain provision \
     --dns-backend=SAMBA_INTERNAL \
     $SAMBA_OPTIONS \
     --option="bind interfaces only"=yes
-
-# Move smb.conf
-#mv /etc/samba/smb.conf /var/lib/samba/private/smb.conf
 
 # Update dns-forwarder if required
 if [ -n "$SAMBA_DNS_FORWARDER" ]

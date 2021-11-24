@@ -28,9 +28,11 @@ VOLUME ["/var/lib/samba"]
 #CMD ["/etc/my_init.d/samba_setup.sh"]
 RUN apt-get update && \
 	apt-get install -y supervisor ntp
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY ntp.conf /etc/
 
+COPY ntp.conf /etc/
+RUN apt-get install -y bind9 bind9utils
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD ["/usr/bin/supervisord"]
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
