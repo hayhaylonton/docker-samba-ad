@@ -29,6 +29,7 @@ VOLUME ["/var/lib/samba"]
 RUN apt-get update && \
 	apt-get install -y supervisor ntp
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ntp.conf /etc/
 
 CMD ["/usr/bin/supervisord"]
 # Clean up APT when done.
@@ -50,4 +51,5 @@ EXPOSE 135/tcp \
     53/tcp \
     53/udp \
     88/tcp \
-    88/udp
+    88/udp \
+    123/udp
