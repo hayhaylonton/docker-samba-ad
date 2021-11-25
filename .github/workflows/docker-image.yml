@@ -14,14 +14,14 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@2
+    - uses: actions/checkout@v2
     - name: set TAG_NAME
       run: echo "TAG_NAME=$(date +%s)" >> $GITHUB_ENV
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ghcr.io/hayhaylonton/samba4-ad:TAG_NAME --tag ghcr.io/hayhaylonton/samba4-ad:latest
 
   push_image:
-
+    needs: build
     runs-on: self-hosted
 
     steps:
