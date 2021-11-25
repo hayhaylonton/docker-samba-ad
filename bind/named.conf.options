@@ -1,0 +1,47 @@
+options {
+         directory "/var/cache/bind";
+         notify no;
+         empty-zones-enable no;
+
+         #Adding this Samba generated file will allow for automatic DDNS updates
+         # To enable dynamic DNS updates using Kerberos 
+         tkey-gssapi-keytab "/var/lib/samba/private/dns.keytab";
+
+         # IP addresses and network ranges allowed to query the DNS server: 
+         # allowed users from another segment
+         allow-query {
+                 10.10.20.0/24;
+                 10.10.30.0/24;
+                 localhost;
+};
+
+# IP addresses and network ranges allowed to run recursive queries:
+# (Zones not served by this DNS server) 
+         # allowed users from another segment
+         allow-recursion {
+                 10.10.20.0/24;
+                 10.10.30.0/24;
+                 localhost;
+         };
+
+# Forward queries that can not be answered from own zones
+         # to these DNS servers: 
+         forwarders {
+                 8.8.8.8;
+                 8.8.4.4;
+         };
+
+# Disable zone transfers
+         allow-transfer {
+                 none;
+         };
+
+dnssec-validation auto;
+
+auth-nxdomain no; # conform to RFC1035
+# If auth-nxdomain is 'yes' allows the server to answer authoritatively (the AA bit is set)
+# when returning NXDOMAIN (domain does not exist) answers, if 'no' (the default) the 
+# server will not answer authoritatively. 
+listen-on-v6 { any; };
+
+};
