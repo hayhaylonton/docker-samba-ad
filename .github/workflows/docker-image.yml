@@ -20,7 +20,7 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ghcr.io/hayhaylonton/samba4-ad:TAG_NAME --tag ghcr.io/hayhaylonton/samba4-ad:latest
 
-  push image:
+  push_image:
 
     runs-on: self-hosted
 
