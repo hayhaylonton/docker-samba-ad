@@ -14,7 +14,7 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@
+    - uses: actions/checkout@2
     - name: set TAG_NAME
       run: echo "TAG_NAME=$(date +%s)" >> $GITHUB_ENV
     - name: Build the Docker image
