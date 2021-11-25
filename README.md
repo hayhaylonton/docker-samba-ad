@@ -1,1 +1,2 @@
 # docker-samba-ad
+[![Docker Image CI](https://github.com/hayhaylonton/docker-samba-ad/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/hayhaylonton/docker-samba-ad/actions/workflows/docker-image.yml)
