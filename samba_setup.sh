@@ -13,7 +13,6 @@ samba_run () {
 }
 
 # Check if samba is setup
-#[ -f /var/lib/samba/.setup ] && /etc/my_init.d/samba_run.sh
 if [ -f /var/lib/samba/.setup ]
 then
     samba_run
@@ -52,12 +51,9 @@ samba-tool domain provision \
     --realm=${SAMBA_REALM} \
     --adminpass=${SAMBA_PASSWORD} \
     --server-role=dc \
-    --dns-backend=SAMBA_INTERNAL \
+    --dns-backend=BIND9_DLZ \
     $SAMBA_OPTIONS \
     --option="bind interfaces only"=yes
-
-# Move smb.conf
-#mv /etc/samba/smb.conf /var/lib/samba/private/smb.conf
 
 # Update dns-forwarder if required
 if [ -n "$SAMBA_DNS_FORWARDER" ]
@@ -74,4 +70,5 @@ sed -i "s/dns_lookup_realm = false/dns_lookup_realm = true/" /etc/krb5.conf
 
 # Mark samba as setup
 touch /var/lib/samba/.setup
+cp -Rvaf /etc/my_init.d/named.conf /var/lib/samba/private/
 samba_run

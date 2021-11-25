@@ -28,12 +28,19 @@ VOLUME ["/var/lib/samba"]
 #CMD ["/etc/my_init.d/samba_setup.sh"]
 RUN apt-get update && \
 	apt-get install -y supervisor ntp
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY ntp.conf /etc/
 
-CMD ["/usr/bin/supervisord"]
+COPY ntp/ntp.conf /etc/
+RUN apt-get install -y bind9 bind9utils
+
+COPY supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY bind/* /etc/bind/
+COPY samba/named.conf /etc/my_init.d/
+
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ADD https://www.internic.net/zones/named.root /etc/bind/db.root
+
+CMD ["/usr/bin/supervisord"]
 
 # Expose AD DC Ports
 EXPOSE 135/tcp \
@@ -52,4 +59,5 @@ EXPOSE 135/tcp \
     53/udp \
     88/tcp \
     88/udp \
-    123/udp
+    123/udp \
+    53/udp
