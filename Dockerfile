@@ -33,9 +33,14 @@ COPY ntp.conf /etc/
 RUN apt-get install -y bind9 bind9utils
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-CMD ["/usr/bin/supervisord"]
+COPY bind/* /etc/bind/
+COPY samba/named.conf /etc/my_init.d/
+
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ADD https://www.internic.net/zones/named.root /etc/bind/db.root
+
+CMD ["/usr/bin/supervisord"]
 
 # Expose AD DC Ports
 EXPOSE 135/tcp \
