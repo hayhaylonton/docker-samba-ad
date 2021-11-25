@@ -29,10 +29,10 @@ VOLUME ["/var/lib/samba"]
 RUN apt-get update && \
 	apt-get install -y supervisor ntp
 
-COPY ntp.conf /etc/
+COPY ntp/ntp.conf /etc/
 RUN apt-get install -y bind9 bind9utils
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY bind/* /etc/bind/
 COPY samba/named.conf /etc/my_init.d/
 
@@ -59,4 +59,5 @@ EXPOSE 135/tcp \
     53/udp \
     88/tcp \
     88/udp \
-    123/udp
+    123/udp \
+    53/udp
