@@ -9,7 +9,7 @@ ENV SAMBA_DNS_FORWARDER="10.10.10.254"
 
 RUN apt-get update && \
 	apt-get install -y \
-       locales samba krb5-user krb5-config winbind smbclient libpam-winbind libnss-winbind \
+       locales samba krb5-user krb5-config winbind smbclient libpam-winbind libnss-winbind lmdb-utils \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

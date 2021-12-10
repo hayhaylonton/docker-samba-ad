@@ -1,0 +1,3 @@
+docker-compose rm -fs
+docker volume prune -f
+docker network prune -f
