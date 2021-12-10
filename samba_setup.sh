@@ -52,6 +52,7 @@ samba-tool domain provision \
     --adminpass=${SAMBA_PASSWORD} \
     --server-role=dc \
     --dns-backend=BIND9_DLZ \
+    --backend-store=mdb \
     $SAMBA_OPTIONS \
     --option="bind interfaces only"=yes
 
